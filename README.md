@@ -22,3 +22,6 @@ Abra `http://localhost:3000` no navegador.
 Esse endpoint faz proxy para:
 - `https://comunicaapi.pje.jus.br/api/v1/comunicacao`
 - Parâmetros: `numeroProcesso` e `meio=D`
+
+
+A interface apresenta os resultados em cards para facilitar a leitura.
