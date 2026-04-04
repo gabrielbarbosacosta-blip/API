@@ -258,7 +258,19 @@
           const response = await fetch(`/processo/${encodeURIComponent(numero)}`);
 
           if (!response.ok) {
-            throw new Error(`Falha na consulta (${response.status})`);
+            let backendError = null;
+            try {
+              backendError = await response.json();
+            } catch (_) {
+              backendError = null;
+            }
+
+            const msg =
+              backendError?.mensagem ||
+              backendError?.erro ||
+              `Falha na consulta (${response.status})`;
+
+            throw new Error(msg);
           }
 
           const data = await response.json();

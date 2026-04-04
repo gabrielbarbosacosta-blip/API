@@ -26,8 +26,24 @@ app.get("/processo/:numero", async (req, res) => {
 
     res.json(response.data);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ erro: "Erro ao buscar dados" });
+    const status = error.response?.status || 500;
+    const detalhes = error.response?.data || null;
+
+    console.error("Erro ao buscar dados da API PJe:", error.message);
+    if (detalhes) {
+      console.error("Detalhes da resposta externa:", JSON.stringify(detalhes));
+    }
+
+    res.status(status).json({
+      erro: "Erro ao buscar dados",
+      mensagem:
+        detalhes?.message ||
+        detalhes?.erro ||
+        error.message ||
+        "Falha ao consultar a API externa",
+      statusExterno: error.response?.status || null,
+      detalhes
+    });
   }
 });
 
