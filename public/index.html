@@ -3,288 +3,143 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Consulta de Processo - PJe</title>
+    <title>Consulta PJe</title>
     <style>
-      :root {
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        color-scheme: light;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
       body {
         margin: 0;
-        min-height: 100vh;
-        background: #f5f7fb;
-        color: #1f2937;
-        display: grid;
-        place-items: start center;
+        font-family: Arial, sans-serif;
+        background: #f3f4f6;
+        color: #111827;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 10px;
         padding: 20px;
       }
 
-      .card {
-        width: min(1100px, 100%);
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        padding: 24px;
-      }
-
-      h1 {
-        margin-top: 0;
-      }
-
-      .row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 12px;
+      form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
       }
 
       input,
       button {
-        border-radius: 10px;
-        border: 1px solid #d1d5db;
-        font-size: 1rem;
-        padding: 12px 14px;
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      input {
+        flex: 1;
+        min-width: 260px;
       }
 
       button {
-        background: #0f62fe;
-        color: #fff;
-        border-color: #0f62fe;
         cursor: pointer;
-        font-weight: 600;
-      }
-
-      button:disabled {
-        opacity: 0.65;
-        cursor: not-allowed;
-      }
-
-      .hint {
-        margin: 10px 0 0;
-        color: #4b5563;
       }
 
       .status {
+        margin-top: 12px;
+        font-weight: bold;
+      }
+
+      .cards {
         margin-top: 16px;
-        font-weight: 600;
-      }
-
-      .status.error {
-        color: #b91c1c;
-      }
-
-      .status.ok {
-        color: #166534;
-      }
-
-      .results-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 14px;
-        margin-top: 16px;
+        gap: 12px;
       }
 
-      .result-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 14px;
+      .card {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 12px;
         background: #fafafa;
       }
 
-      .result-card h3 {
-        margin: 0 0 10px;
-        font-size: 1rem;
+      .card h3 {
+        margin: 0 0 8px;
       }
 
-      .fields {
-        display: grid;
-        gap: 8px;
+      .item {
+        margin: 4px 0;
       }
 
-      .field {
-        border-top: 1px dashed #e5e7eb;
-        padding-top: 8px;
-      }
-
-      .field:first-child {
-        border-top: 0;
-        padding-top: 0;
-      }
-
-      .field strong {
-        color: #111827;
-        display: block;
-      }
-
-      .field span {
-        color: #374151;
-        display: block;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .empty-box {
-        margin-top: 16px;
-        border: 1px dashed #d1d5db;
-        border-radius: 10px;
-        padding: 14px;
-        color: #6b7280;
-      }
-
-      @media (max-width: 640px) {
-        .row {
-          grid-template-columns: 1fr;
-        }
+      .item strong {
+        display: inline-block;
+        min-width: 140px;
       }
     </style>
   </head>
   <body>
-    <main class="card">
-      <h1>Consulta de Processo (PJe)</h1>
-      <p>Digite o número do processo para buscar as comunicações no Diário.</p>
-
-      <form id="consultaForm" class="row">
-        <input
-          id="numeroProcesso"
-          name="numeroProcesso"
-          placeholder="Ex.: 0000000-00.0000.0.00.0000"
-          required
-        />
-        <button id="buscarBtn" type="submit">Buscar</button>
+    <main class="container">
+      <h1>Consulta de Processo</h1>
+      <form id="formConsulta">
+        <input id="numero" placeholder="Número do processo" required />
+        <button type="submit">Buscar</button>
       </form>
 
-      <p class="hint">Endpoint utilizado: <code>GET /processo/:numero</code></p>
       <div id="status" class="status"></div>
-      <section id="resultadoCards" class="results-grid"></section>
-      <div id="resultadoVazio" class="empty-box">Aguardando consulta...</div>
+      <section id="cards" class="cards"></section>
     </main>
 
     <script>
-      const form = document.getElementById("consultaForm");
-      const input = document.getElementById("numeroProcesso");
+      const form = document.getElementById("formConsulta");
+      const numeroInput = document.getElementById("numero");
       const status = document.getElementById("status");
-      const buscarBtn = document.getElementById("buscarBtn");
-      const resultadoCards = document.getElementById("resultadoCards");
-      const resultadoVazio = document.getElementById("resultadoVazio");
+      const cards = document.getElementById("cards");
 
-      const toItems = (data) => {
+      function getLista(data) {
         if (Array.isArray(data)) return data;
         if (Array.isArray(data.items)) return data.items;
         if (Array.isArray(data.content)) return data.content;
-        if (Array.isArray(data.comunicacoes)) return data.comunicacoes;
         return data ? [data] : [];
-      };
+      }
 
-      const formatValue = (value) => {
-        if (value === null || value === undefined || value === "") return "-";
-        if (typeof value === "object") return JSON.stringify(value, null, 2);
-        return String(value);
-      };
-
-      const createField = (key, value) => {
-        const field = document.createElement("div");
-        field.className = "field";
-
-        const label = document.createElement("strong");
-        label.textContent = key;
-
-        const text = document.createElement("span");
-        text.textContent = formatValue(value);
-
-        field.append(label, text);
-        return field;
-      };
-
-      const createCard = (item, index) => {
+      function criarCard(obj, index) {
         const card = document.createElement("article");
-        card.className = "result-card";
+        card.className = "card";
 
-        const title = document.createElement("h3");
-        title.textContent = `Resultado ${index + 1}`;
+        const titulo = document.createElement("h3");
+        titulo.textContent = `Resultado ${index + 1}`;
+        card.appendChild(titulo);
 
-        const fields = document.createElement("div");
-        fields.className = "fields";
+        Object.entries(obj).forEach(([chave, valor]) => {
+          const linha = document.createElement("div");
+          linha.className = "item";
+          linha.innerHTML = `<strong>${chave}:</strong> ${typeof valor === "object" ? JSON.stringify(valor) : valor}`;
+          card.appendChild(linha);
+        });
 
-        const entries = Object.entries(item || {});
-
-        if (!entries.length) {
-          const empty = document.createElement("span");
-          empty.textContent = "Sem campos para exibir.";
-          fields.append(empty);
-        } else {
-          entries.forEach(([key, value]) => fields.append(createField(key, value)));
-        }
-
-        card.append(title, fields);
         return card;
-      };
+      }
 
-      const renderCards = (data) => {
-        resultadoCards.replaceChildren();
-
-        const items = toItems(data);
-        if (!items.length) {
-          resultadoVazio.style.display = "block";
-          resultadoVazio.textContent = "Nenhum resultado encontrado para este processo.";
-          return;
-        }
-
-        resultadoVazio.style.display = "none";
-        items.forEach((item, index) => resultadoCards.append(createCard(item, index)));
-      };
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const numero = input.value.trim();
-        if (!numero) {
-          status.className = "status error";
-          status.textContent = "Informe um número de processo válido.";
-          return;
-        }
-
-        buscarBtn.disabled = true;
-        status.className = "status";
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        cards.innerHTML = "";
         status.textContent = "Consultando...";
-        resultadoCards.replaceChildren();
-        resultadoVazio.style.display = "block";
-        resultadoVazio.textContent = "Buscando informações...";
 
         try {
-          const response = await fetch(`/processo/${encodeURIComponent(numero)}`);
+          const numero = numeroInput.value.trim();
+          const res = await fetch(`/processo/${encodeURIComponent(numero)}`);
+          const data = await res.json();
 
-          if (!response.ok) {
-            let backendError = null;
-            try {
-              backendError = await response.json();
-            } catch (_) {
-              backendError = null;
-            }
-
-            const msg =
-              backendError?.mensagem ||
-              backendError?.erro ||
-              `Falha na consulta (${response.status})`;
-
-            throw new Error(msg);
+          if (!res.ok) {
+            throw new Error(data.erro || `Erro ${res.status}`);
           }
 
-          const data = await response.json();
-          status.className = "status ok";
-          status.textContent = "Consulta concluída com sucesso.";
-          renderCards(data);
+          const lista = getLista(data);
+          if (!lista.length) {
+            status.textContent = "Nenhum resultado encontrado.";
+            return;
+          }
+
+          status.textContent = `Encontrado(s) ${lista.length} resultado(s).`;
+          lista.forEach((item, i) => cards.appendChild(criarCard(item, i)));
         } catch (error) {
-          status.className = "status error";
           status.textContent = `Erro: ${error.message}`;
-          resultadoCards.replaceChildren();
-          resultadoVazio.style.display = "block";
-          resultadoVazio.textContent = "Não foi possível obter os dados.";
-        } finally {
-          buscarBtn.disabled = false;
         }
       });
     </script>

@@ -8,42 +8,25 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/processo/:numero", async (req, res) => {
-  const numero = req.params.numero;
+  const { numero } = req.params;
 
   try {
-    const response = await axios.get(
-      "https://comunicaapi.pje.jus.br/api/v1/comunicacao",
-      {
-        params: {
-          numeroProcesso: numero,
-          meio: "D"
-        },
-        headers: {
-          accept: "application/json"
-        }
+    const { data } = await axios.get("https://comunicaapi.pje.jus.br/api/v1/comunicacao", {
+      params: {
+        numeroProcesso: numero,
+        meio: "D"
+      },
+      headers: {
+        accept: "application/json"
       }
-    );
+    });
 
-    res.json(response.data);
+    res.json(data);
   } catch (error) {
     const status = error.response?.status || 500;
-    const detalhes = error.response?.data || null;
+    const mensagem = error.response?.data?.message || "Não foi possível consultar a API externa.";
 
-    console.error("Erro ao buscar dados da API PJe:", error.message);
-    if (detalhes) {
-      console.error("Detalhes da resposta externa:", JSON.stringify(detalhes));
-    }
-
-    res.status(status).json({
-      erro: "Erro ao buscar dados",
-      mensagem:
-        detalhes?.message ||
-        detalhes?.erro ||
-        error.message ||
-        "Falha ao consultar a API externa",
-      statusExterno: error.response?.status || null,
-      detalhes
-    });
+    res.status(status).json({ erro: mensagem });
   }
 });
 
