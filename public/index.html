@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulta PJe</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f3f4f6;
+        color: #111827;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      input,
+      button {
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      input {
+        flex: 1;
+        min-width: 260px;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .status {
+        margin-top: 12px;
+        font-weight: bold;
+      }
+
+      .cards {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .card {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 12px;
+        background: #fafafa;
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+      }
+
+      .item {
+        margin: 4px 0;
+      }
+
+      .item strong {
+        display: inline-block;
+        min-width: 140px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h1>Consulta de Processo</h1>
+      <form id="formConsulta">
+        <input id="numero" placeholder="Número do processo" required />
+        <button type="submit">Buscar</button>
+      </form>
+
+      <div id="status" class="status"></div>
+      <section id="cards" class="cards"></section>
+    </main>
+
+    <script>
+      const form = document.getElementById("formConsulta");
+      const numeroInput = document.getElementById("numero");
+      const status = document.getElementById("status");
+      const cards = document.getElementById("cards");
+
+      function getLista(data) {
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.items)) return data.items;
+        if (Array.isArray(data.content)) return data.content;
+        return data ? [data] : [];
+      }
+
+      function criarCard(obj, index) {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const titulo = document.createElement("h3");
+        titulo.textContent = `Resultado ${index + 1}`;
+        card.appendChild(titulo);
+
+        Object.entries(obj).forEach(([chave, valor]) => {
+          const linha = document.createElement("div");
+          linha.className = "item";
+          linha.innerHTML = `<strong>${chave}:</strong> ${typeof valor === "object" ? JSON.stringify(valor) : valor}`;
+          card.appendChild(linha);
+        });
+
+        return card;
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        cards.innerHTML = "";
+        status.textContent = "Consultando...";
+
+        try {
+          const numero = numeroInput.value.trim();
+          const res = await fetch(`/processo/${encodeURIComponent(numero)}`);
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.erro || `Erro ${res.status}`);
+          }
+
+          const lista = getLista(data);
+          if (!lista.length) {
+            status.textContent = "Nenhum resultado encontrado.";
+            return;
+          }
+
+          status.textContent = `Encontrado(s) ${lista.length} resultado(s).`;
+          lista.forEach((item, i) => cards.appendChild(criarCard(item, i)));
+        } catch (error) {
+          status.textContent = `Erro: ${error.message}`;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "consulta-processo-web",
+  "version": "1.0.0",
+  "description": "Aplicação web para consultar dados da API de comunicação do PJe por número de processo.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.8.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
