@@ -2,6 +2,10 @@
 set -eu
 
 mkdir -p /config
+mkdir -p /config/custom_components
+
+rm -rf /config/custom_components/xiaomi_home
+cp -a /opt/xiaomi_home /config/custom_components/xiaomi_home
 
 if [ ! -f /config/configuration.yaml ]; then
   cat > /config/configuration.yaml <<'EOF'
