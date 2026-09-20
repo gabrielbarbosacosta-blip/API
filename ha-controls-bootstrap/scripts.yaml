@@ -185,3 +185,5 @@ aspirar_corredor:
         rooms: [9]
         clean_type: "Vacuuming"
         suction: "Standard"
+
+# deploy-refresh: corrected room guard
