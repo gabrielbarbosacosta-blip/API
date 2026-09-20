@@ -286,9 +286,9 @@ passar_pano_sala:
         rooms: [3]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_quarto:
   alias: "Passar Pano no Quarto"
@@ -300,9 +300,9 @@ passar_pano_quarto:
         rooms: [4]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_escritorio:
   alias: "Passar Pano no Escritório"
@@ -314,9 +314,9 @@ passar_pano_escritorio:
         rooms: [5]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_cozinha:
   alias: "Passar Pano na Cozinha"
@@ -328,9 +328,9 @@ passar_pano_cozinha:
         rooms: [10]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_varanda:
   alias: "Passar Pano na Varanda"
@@ -342,9 +342,9 @@ passar_pano_varanda:
         rooms: [6]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_banheiro:
   alias: "Passar Pano no Banheiro"
@@ -356,9 +356,9 @@ passar_pano_banheiro:
         rooms: [7]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_banheiro_1:
   alias: "Passar Pano no Banheiro 1"
@@ -370,9 +370,9 @@ passar_pano_banheiro_1:
         rooms: [8]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_corredor:
   alias: "Passar Pano no Corredor"
@@ -384,9 +384,9 @@ passar_pano_corredor:
         rooms: [9]
         clean_type: "Mopping"
         suction: "Standard"
-        route: "Daily"
+        route: "Careful"
         passes: "Once"
-        water: "Level 2"
+        water: "Level 3"
 
 passar_pano_casa_toda:
   alias: "Passar Pano na Casa Toda"
@@ -414,7 +414,7 @@ passar_pano_casa_toda:
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74
       data:
-        option: "Daily"
+        option: "Careful"
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
@@ -424,7 +424,7 @@ passar_pano_casa_toda:
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
       data:
-        option: "Level 2"
+        option: "Level 3"
     - action: button.press
       target:
         entity_id: button.xiaomi_us_1194749639_ov42gl_start_mop_a_2_5
