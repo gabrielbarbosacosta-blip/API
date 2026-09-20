@@ -29,11 +29,18 @@ vacuum_helper_clean_rooms:
             - "Strong"
             - "Turbo"
   sequence:
-    - action: button.press
-      target:
-        entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
-    - delay:
-        seconds: 4
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+              state: "docked"
+      then:
+        - action: button.press
+          target:
+            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+        - delay:
+            seconds: 4
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
@@ -46,11 +53,23 @@ vacuum_helper_clean_rooms:
         option: "{{ suction | default('Standard') }}"
     - delay:
         seconds: 2
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_room_debug
+        message: "ROOM_REQUEST rooms={{ rooms | join(',') }} map={{ states('sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16') }}"
     - action: notify.send_message
       target:
         entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
       data:
         message: "{{ rooms | join(',') }}"
+    - delay:
+        seconds: 1
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_room_debug
+        message: "ROOM_RESULT requested={{ rooms | join(',') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
 
 limpar_tudo:
   alias: "Limpar Tudo"
