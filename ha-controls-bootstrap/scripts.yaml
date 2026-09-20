@@ -29,18 +29,11 @@ vacuum_helper_clean_rooms:
             - "Strong"
             - "Turbo"
   sequence:
-    - if:
-        - condition: not
-          conditions:
-            - condition: state
-              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
-              state: "docked"
-      then:
-        - action: button.press
-          target:
-            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
-        - delay:
-            seconds: 4
+    - action: button.press
+      target:
+        entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+    - delay:
+        seconds: 4
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
@@ -86,14 +79,16 @@ parar_aspirador:
       target:
         entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
 
-voltar_aspirador_base:
-  alias: "Voltar Aspirador para a Base"
-  icon: mdi:home-map-marker
+aspirar_sala:
+  alias: "Aspirar Sala"
+  icon: mdi:sofa
   mode: single
   sequence:
-    - action: vacuum.return_to_base
-      target:
-        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [3]
+        clean_type: "Vacuuming"
+        suction: "Standard"
 
 aspirar_quarto:
   alias: "Aspirar Quarto"
@@ -114,6 +109,17 @@ aspirar_escritorio:
     - action: script.vacuum_helper_clean_rooms
       data:
         rooms: [5]
+        clean_type: "Vacuuming"
+        suction: "Standard"
+
+aspirar_cozinha:
+  alias: "Aspirar Cozinha"
+  icon: mdi:countertop-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [10]
         clean_type: "Vacuuming"
         suction: "Standard"
 
