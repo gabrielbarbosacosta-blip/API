@@ -39,13 +39,11 @@ vacuum_helper_clean_rooms:
             - "Careful"
     passes:
       name: Número de passagens
-      default: "One Time"
+      default: "Once"
       selector:
         select:
           options:
-            - "One Time"
-            - "Two Time"
-            - "Three Time"
+            - "Once"
     water:
       name: Saída de água
       default: "Off"
@@ -88,7 +86,7 @@ vacuum_helper_clean_rooms:
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
       data:
-        option: "{{ passes | default('One Time') }}"
+        option: "{{ passes | default('Once') }}"
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
@@ -100,7 +98,7 @@ vacuum_helper_clean_rooms:
       data:
         level: warning
         logger: vacuum_room_debug
-        message: "ROOM_REQUEST rooms={{ rooms | join(',') }} route={{ route | default('Daily') }} passes={{ passes | default('One Time') }} water={{ water | default('Off') }} map={{ states('sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16') }}"
+        message: "ROOM_REQUEST rooms={{ rooms | join(',') }} route={{ route | default('Daily') }} passes={{ passes | default('Once') }} water={{ water | default('Off') }} map={{ states('sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16') }}"
     - action: notify.send_message
       target:
         entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
@@ -147,7 +145,7 @@ aspirar_tudo:
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
       data:
-        option: "One Time"
+        option: "Once"
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
@@ -177,7 +175,7 @@ aspirar_sala:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_quarto:
@@ -191,7 +189,7 @@ aspirar_quarto:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_escritorio:
@@ -205,7 +203,7 @@ aspirar_escritorio:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_cozinha:
@@ -219,7 +217,7 @@ aspirar_cozinha:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_varanda:
@@ -233,7 +231,7 @@ aspirar_varanda:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_banheiro:
@@ -247,7 +245,7 @@ aspirar_banheiro:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_banheiro_1:
@@ -261,7 +259,7 @@ aspirar_banheiro_1:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
 
 aspirar_corredor:
@@ -275,5 +273,5 @@ aspirar_corredor:
         clean_type: "Vacuuming"
         suction: "Standard"
         route: "Daily"
-        passes: "One Time"
+        passes: "Once"
         water: "Off"
