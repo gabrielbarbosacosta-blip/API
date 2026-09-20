@@ -275,3 +275,156 @@ aspirar_corredor:
         route: "Daily"
         passes: "Once"
         water: "Off"
+
+passar_pano_sala:
+  alias: "Passar Pano na Sala"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [3]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_quarto:
+  alias: "Passar Pano no Quarto"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [4]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_escritorio:
+  alias: "Passar Pano no Escritório"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [5]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_cozinha:
+  alias: "Passar Pano na Cozinha"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [10]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_varanda:
+  alias: "Passar Pano na Varanda"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [6]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_banheiro:
+  alias: "Passar Pano no Banheiro"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [7]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_banheiro_1:
+  alias: "Passar Pano no Banheiro 1"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [8]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_corredor:
+  alias: "Passar Pano no Corredor"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [9]
+        clean_type: "Mopping"
+        suction: "Standard"
+        route: "Daily"
+        passes: "Once"
+        water: "Level 2"
+
+passar_pano_casa_toda:
+  alias: "Passar Pano na Casa Toda"
+  icon: mdi:bucket-outline
+  mode: single
+  sequence:
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+              state: "docked"
+      then:
+        - action: button.press
+          target:
+            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+        - delay:
+            seconds: 4
+    - action: select.select_option
+      target:
+        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
+      data:
+        option: "Mopping"
+    - action: select.select_option
+      target:
+        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74
+      data:
+        option: "Daily"
+    - action: select.select_option
+      target:
+        entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
+      data:
+        option: "Once"
+    - action: select.select_option
+      target:
+        entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
+      data:
+        option: "Level 2"
+    - action: button.press
+      target:
+        entity_id: button.xiaomi_us_1194749639_ov42gl_start_mop_a_2_5
