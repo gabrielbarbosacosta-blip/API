@@ -1,0 +1,162 @@
+vacuum_helper_clean_rooms:
+  alias: "[helper] Aspirador - limpar cômodos"
+  icon: mdi:robot-vacuum
+  mode: single
+  fields:
+    rooms:
+      name: IDs dos cômodos
+      required: true
+      selector:
+        object:
+    clean_type:
+      name: Tipo de limpeza
+      default: "Vacuuming"
+      selector:
+        select:
+          options:
+            - "Vacuuming"
+            - "Mopping"
+            - "Vacuuming & Mopping"
+            - "Vacuuming before mopping"
+    suction:
+      name: Potência
+      default: "Standard"
+      selector:
+        select:
+          options:
+            - "Silent"
+            - "Standard"
+            - "Strong"
+            - "Turbo"
+  sequence:
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+              state: "docked"
+      then:
+        - action: button.press
+          target:
+            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+        - delay:
+            seconds: 4
+    - action: select.select_option
+      target:
+        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
+      data:
+        option: "{{ clean_type | default('Vacuuming') }}"
+    - action: select.select_option
+      target:
+        entity_id: select.xiaomi_us_1194749639_ov42gl_mode_p_2_9
+      data:
+        option: "{{ suction | default('Standard') }}"
+    - delay:
+        seconds: 2
+    - action: notify.send_message
+      target:
+        entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
+      data:
+        message: "{{ rooms | join(',') }}"
+
+limpar_tudo:
+  alias: "Limpar Tudo"
+  icon: mdi:robot-vacuum
+  mode: single
+  sequence:
+    - action: button.press
+      target:
+        entity_id: button.xiaomi_us_1194749639_ov42gl_start_sweep_mop_a_2_6
+
+aspirar_tudo:
+  alias: "Aspirar Tudo"
+  icon: mdi:vacuum
+  mode: single
+  sequence:
+    - action: button.press
+      target:
+        entity_id: button.xiaomi_us_1194749639_ov42gl_start_only_sweep_a_2_4
+
+parar_aspirador:
+  alias: "Parar Aspirador"
+  icon: mdi:stop-circle-outline
+  mode: single
+  sequence:
+    - action: button.press
+      target:
+        entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+
+voltar_aspirador_base:
+  alias: "Voltar Aspirador para a Base"
+  icon: mdi:home-map-marker
+  mode: single
+  sequence:
+    - action: vacuum.return_to_base
+      target:
+        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+
+aspirar_quarto:
+  alias: "Aspirar Quarto"
+  icon: mdi:bed
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [4]
+        clean_type: "Vacuuming"
+        suction: "Standard"
+
+aspirar_escritorio:
+  alias: "Aspirar Escritório"
+  icon: mdi:desk
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [5]
+        clean_type: "Vacuuming"
+        suction: "Standard"
+
+aspirar_varanda:
+  alias: "Aspirar Varanda"
+  icon: mdi:balcony
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [6]
+        clean_type: "Vacuuming"
+        suction: "Standard"
+
+aspirar_banheiro:
+  alias: "Aspirar Banheiro"
+  icon: mdi:shower
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [7]
+        clean_type: "Vacuuming"
+        suction: "Standard"
+
+aspirar_banheiro_1:
+  alias: "Aspirar Banheiro 1"
+  icon: mdi:shower-head
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [8]
+        clean_type: "Vacuuming"
+        suction: "Standard"
+
+aspirar_corredor:
+  alias: "Aspirar Corredor"
+  icon: mdi:floor-plan
+  mode: single
+  sequence:
+    - action: script.vacuum_helper_clean_rooms
+      data:
+        rooms: [9]
+        clean_type: "Vacuuming"
+        suction: "Standard"
