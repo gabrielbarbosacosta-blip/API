@@ -75,6 +75,9 @@ automation:
           - conditions: "{{ command in ['parar_aspirador', 'parar', 'parar_robo', 'stop'] }}"
             sequence:
               - action: script.parar_aspirador
+          - conditions: "{{ command in ['cancelar_limpeza', 'voltar_base', 'ir_para_base'] }}"
+            sequence:
+              - action: script.cancelar_limpeza
           - conditions: "{{ command == 'limpar_tudo' }}"
             sequence:
               - action: script.limpar_tudo
