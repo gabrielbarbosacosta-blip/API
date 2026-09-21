@@ -63,6 +63,123 @@ input_boolean:
     name: "Limpeza do Robô Ativa"
     icon: mdi:robot-vacuum
 
+input_text:
+  robot_cleaning_target:
+    name: "Alvo atual da limpeza"
+    max: 32
+
+input_number:
+  robot_cleaning_started_ts:
+    name: "Início da limpeza (timestamp)"
+    min: 0
+    max: 4102444800
+    step: 1
+    mode: box
+
+  robot_avg_sala_minutes:
+    name: "Média de limpeza - Sala"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_sala:
+    name: "Amostras de limpeza - Sala"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_quarto_minutes:
+    name: "Média de limpeza - Quarto"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_quarto:
+    name: "Amostras de limpeza - Quarto"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_escritorio_minutes:
+    name: "Média de limpeza - Escritório"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_escritorio:
+    name: "Amostras de limpeza - Escritório"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_cozinha_minutes:
+    name: "Média de limpeza - Cozinha"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_cozinha:
+    name: "Amostras de limpeza - Cozinha"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_banheiro_minutes:
+    name: "Média de limpeza - Banheiro"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_banheiro:
+    name: "Amostras de limpeza - Banheiro"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_banheiro_1_minutes:
+    name: "Média de limpeza - Segundo banheiro"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_banheiro_1:
+    name: "Amostras de limpeza - Segundo banheiro"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_corredor_minutes:
+    name: "Média de limpeza - Corredor"
+    min: 0
+    max: 300
+    step: 0.1
+    mode: box
+  robot_count_corredor:
+    name: "Amostras de limpeza - Corredor"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
+  robot_avg_limpeza_completa_minutes:
+    name: "Média de limpeza - Completa"
+    min: 0
+    max: 600
+    step: 0.1
+    mode: box
+  robot_count_limpeza_completa:
+    name: "Amostras de limpeza - Completa"
+    min: 0
+    max: 10000
+    step: 1
+    mode: box
+
 automation:
   - id: alexa_robot_webhook
     alias: "Alexa - Controle do Robô"
@@ -132,8 +249,73 @@ automation:
 
     variables:
       announce_entity: "{{ state_attr('sensor.alexa_devices_last_called', 'notify_announce') | default('', true) }}"
+      target: "{{ states('input_text.robot_cleaning_target') }}"
+      started_ts: "{{ states('input_number.robot_cleaning_started_ts') | float(0) }}"
+      duration_minutes: >-
+        {{ ((as_timestamp(now()) - (started_ts | float(0))) / 60) | round(1) if (started_ts | float(0)) > 0 else 0 }}
+      avg_entity: >-
+        {% set m = {
+          'sala': 'input_number.robot_avg_sala_minutes',
+          'quarto': 'input_number.robot_avg_quarto_minutes',
+          'escritorio': 'input_number.robot_avg_escritorio_minutes',
+          'cozinha': 'input_number.robot_avg_cozinha_minutes',
+          'banheiro': 'input_number.robot_avg_banheiro_minutes',
+          'banheiro_1': 'input_number.robot_avg_banheiro_1_minutes',
+          'corredor': 'input_number.robot_avg_corredor_minutes',
+          'limpeza_completa': 'input_number.robot_avg_limpeza_completa_minutes'
+        } %}
+        {{ m.get(target, '') }}
+      count_entity: >-
+        {% set m = {
+          'sala': 'input_number.robot_count_sala',
+          'quarto': 'input_number.robot_count_quarto',
+          'escritorio': 'input_number.robot_count_escritorio',
+          'cozinha': 'input_number.robot_count_cozinha',
+          'banheiro': 'input_number.robot_count_banheiro',
+          'banheiro_1': 'input_number.robot_count_banheiro_1',
+          'corredor': 'input_number.robot_count_corredor',
+          'limpeza_completa': 'input_number.robot_count_limpeza_completa'
+        } %}
+        {{ m.get(target, '') }}
+      old_avg: "{{ states(avg_entity) | float(0) if avg_entity else 0 }}"
+      old_count: "{{ states(count_entity) | int(0) if count_entity else 0 }}"
+      new_count: "{{ (old_count | int(0)) + 1 }}"
+      new_avg: >-
+        {% if (duration_minutes | float(0)) > 0 %}
+          {% if (old_count | int(0)) > 0 %}
+            {{ ((((old_avg | float(0)) * (old_count | int(0))) + (duration_minutes | float(0))) / (new_count | int)) | round(1) }}
+          {% else %}
+            {{ duration_minutes | float(0) }}
+          {% endif %}
+        {% else %}
+          {{ old_avg | float(0) }}
+        {% endif %}
 
     action:
+      - if:
+          - condition: template
+            value_template: >-
+              {{ avg_entity != ''
+                 and count_entity != ''
+                 and (duration_minutes | float(0)) >= 1
+                 and (duration_minutes | float(0)) <= 600 }}
+        then:
+          - action: input_number.set_value
+            target:
+              entity_id: "{{ avg_entity }}"
+            data:
+              value: "{{ new_avg }}"
+          - action: input_number.set_value
+            target:
+              entity_id: "{{ count_entity }}"
+            data:
+              value: "{{ new_count }}"
+          - action: system_log.write
+            data:
+              level: warning
+              logger: vacuum_eta_history
+              message: "ETA_HISTORY target={{ target }} duration={{ duration_minutes }} avg={{ new_avg }} samples={{ new_count }}"
+
       - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.robot_cleaning_active
