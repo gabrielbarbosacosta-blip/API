@@ -4,6 +4,12 @@ set -eu
 cp /tmp/scripts.yaml /config/scripts.yaml
 cp /tmp/h50_dashboard.yaml /config/h50_dashboard.yaml
 
+# Xiaomi Cloud Map Extractor v3 is isolated from xiaomi_home.
+# Copy only this component; do not touch any other custom integration.
+mkdir -p /config/custom_components
+rm -rf /config/custom_components/xiaomi_cloud_map_extractor
+cp -R /opt/xiaomi_cloud_map_extractor /config/custom_components/xiaomi_cloud_map_extractor
+
 mkdir -p /config/packages
 if [ -n "${ALEXA_WEBHOOK_ID:-}" ]; then
   sed "s/__ALEXA_WEBHOOK_ID__/${ALEXA_WEBHOOK_ID}/g" /tmp/alexa_robot.yaml > /config/packages/alexa_robot.yaml
