@@ -257,6 +257,8 @@ anunciar_previsao_limpeza:
           value_template: >-
             {{ announce_entity is string
                and announce_entity.startswith('notify.')
+               and is_state('input_boolean.robot_alexa_notifications_enabled', 'on')
+               and is_state('input_boolean.robot_alexa_eta_enabled', 'on')
                and is_state('input_boolean.robot_cleaning_active', 'on')
                and states('input_text.robot_cleaning_target') == target }}
       then:
@@ -308,3 +310,27 @@ cancelar_limpeza:
         level: warning
         logger: vacuum_cancel_debug
         message: "CANCEL_RESULT state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }}"
+
+
+testar_notificacao_alexa:
+  alias: "Testar aviso na Alexa"
+  icon: mdi:bullhorn
+  mode: single
+  variables:
+    announce_entity: "{{ state_attr('sensor.alexa_devices_last_called', 'notify_announce') | default('', true) }}"
+  sequence:
+    - if:
+        - condition: template
+          value_template: "{{ announce_entity is string and announce_entity.startswith('notify.') }}"
+      then:
+        - action: notify.send_message
+          target:
+            entity_id: "{{ announce_entity }}"
+          data:
+            message: "Teste de notificações do H50 Pro realizado com sucesso."
+      else:
+        - action: system_log.write
+          data:
+            level: warning
+            logger: vacuum_notification_test
+            message: "Não foi encontrado um dispositivo Alexa para o teste."
