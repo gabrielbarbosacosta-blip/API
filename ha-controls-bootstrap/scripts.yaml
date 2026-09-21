@@ -64,6 +64,10 @@ limpar_comodo:
         logger: vacuum_clean_debug
         message: "CLEAN_ROOM room_id={{ room_id }} mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
 
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.robot_cleaning_active
+
     - action: notify.send_message
       target:
         entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
@@ -128,6 +132,10 @@ limpeza_completa:
         logger: vacuum_clean_debug
         message: "FULL_CLEAN mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
 
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.robot_cleaning_active
+
     - action: vacuum.start
       target:
         entity_id: vacuum.xiaomi_us_1194749639_ov42gl
@@ -138,6 +146,10 @@ cancelar_limpeza:
   icon: mdi:home-import-outline
   mode: single
   sequence:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.robot_cleaning_active
+
     - action: system_log.write
       data:
         level: warning
