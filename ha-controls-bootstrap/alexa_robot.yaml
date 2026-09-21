@@ -18,7 +18,6 @@ automation:
         quarto: 4
         escritorio: 5
         cozinha: 10
-        varanda: 6
         banheiro: 7
         banheiro_1: 8
         corredor: 9
