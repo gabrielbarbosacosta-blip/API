@@ -204,11 +204,11 @@ parar_aspirador:
         level: warning
         logger: vacuum_stop_debug
         message: "STOP_REQUEST state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
-    - action: button.press
+    - action: vacuum.stop
       target:
-        entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
     - delay:
-        seconds: 1
+        seconds: 2
     - action: system_log.write
       data:
         level: warning
