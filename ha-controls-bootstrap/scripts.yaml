@@ -156,9 +156,14 @@ limpar_tudo:
         option: "Level 3"
     - delay:
         seconds: 2
-    - action: button.press
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_full_clean_debug
+        message: "FULL_CLEAN mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
+    - action: vacuum.start
       target:
-        entity_id: button.xiaomi_us_1194749639_ov42gl_start_sweep_mop_a_2_6
+        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
 
 aspirar_tudo:
   alias: "Aspirar Tudo"
