@@ -22,7 +22,23 @@ if ! grep -q '^[[:space:]]*packages: !include_dir_named packages$' /config/confi
 fi
 
 
-if ! grep -q '^lovelace: /config/configuration.yaml; then
+if ! grep -q '^lovelace:
+  cat >> /config/configuration.yaml <<'EOF'
+
+lovelace:
+  mode: storage
+  dashboards:
+    h50-pro:
+      mode: yaml
+      title: H50 Pro
+      icon: mdi:robot-vacuum
+      show_in_sidebar: true
+      filename: h50_dashboard.yaml
+EOF
+fi
+
+exec /init
+ /config/configuration.yaml; then
   cat >> /config/configuration.yaml <<'EOF'
 
 lovelace:
