@@ -220,6 +220,27 @@ parar_aspirador:
         logger: vacuum_stop_debug
         message: "STOP_RESULT state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
 
+cancelar_limpeza:
+  alias: "Cancelar Limpeza"
+  icon: mdi:home-import-outline
+  mode: single
+  sequence:
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_cancel_debug
+        message: "CANCEL_REQUEST state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }}"
+    - action: vacuum.return_to_base
+      target:
+        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+    - delay:
+        seconds: 2
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_cancel_debug
+        message: "CANCEL_RESULT state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }}"
+
 aspirar_sala:
   alias: "Aspirar Sala"
   icon: mdi:sofa
