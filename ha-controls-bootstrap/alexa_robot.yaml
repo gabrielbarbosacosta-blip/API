@@ -1,6 +1,6 @@
 automation:
   - id: alexa_robot_webhook
-    alias: "Alexa - Controle do Aspirador"
+    alias: "Alexa - Controle do Robô"
     mode: queued
     max: 3
     trigger:
@@ -9,81 +9,46 @@ automation:
         allowed_methods:
           - POST
         local_only: false
+
     variables:
       command: "{{ trigger.json.action | default('') }}"
+      room: "{{ trigger.json.room | default('') }}"
+      room_map:
+        sala: 3
+        quarto: 4
+        escritorio: 5
+        cozinha: 10
+        varanda: 6
+        banheiro: 7
+        banheiro_1: 8
+        corredor: 9
+      room_id: "{{ room_map.get(room, 0) }}"
+
     action:
       - action: system_log.write
         data:
           level: warning
           logger: alexa_robot_webhook
-          message: "WEBHOOK_COMMAND action={{ command }}"
+          message: "WEBHOOK_COMMAND action={{ command }} room={{ room }} room_id={{ room_id }}"
+
       - choose:
-          - conditions: "{{ command == 'aspirar_sala' }}"
+          - conditions: "{{ command == 'limpar_comodo' and (room_id | int) > 0 }}"
             sequence:
-              - action: script.aspirar_sala
-          - conditions: "{{ command == 'aspirar_quarto' }}"
+              - action: script.limpar_comodo
+                data:
+                  room_id: "{{ room_id | int }}"
+
+          - conditions: "{{ command == 'limpeza_completa' }}"
             sequence:
-              - action: script.aspirar_quarto
-          - conditions: "{{ command == 'aspirar_escritorio' }}"
-            sequence:
-              - action: script.aspirar_escritorio
-          - conditions: "{{ command == 'aspirar_cozinha' }}"
-            sequence:
-              - action: script.aspirar_cozinha
-          - conditions: "{{ command == 'aspirar_varanda' }}"
-            sequence:
-              - action: script.aspirar_varanda
-          - conditions: "{{ command == 'aspirar_banheiro' }}"
-            sequence:
-              - action: script.aspirar_banheiro
-          - conditions: "{{ command == 'aspirar_banheiro_1' }}"
-            sequence:
-              - action: script.aspirar_banheiro_1
-          - conditions: "{{ command == 'aspirar_corredor' }}"
-            sequence:
-              - action: script.aspirar_corredor
-          - conditions: "{{ command == 'aspirar_tudo' }}"
-            sequence:
-              - action: script.aspirar_tudo
-          - conditions: "{{ command == 'passar_pano_sala' }}"
-            sequence:
-              - action: script.passar_pano_sala
-          - conditions: "{{ command == 'passar_pano_quarto' }}"
-            sequence:
-              - action: script.passar_pano_quarto
-          - conditions: "{{ command == 'passar_pano_escritorio' }}"
-            sequence:
-              - action: script.passar_pano_escritorio
-          - conditions: "{{ command == 'passar_pano_cozinha' }}"
-            sequence:
-              - action: script.passar_pano_cozinha
-          - conditions: "{{ command == 'passar_pano_varanda' }}"
-            sequence:
-              - action: script.passar_pano_varanda
-          - conditions: "{{ command == 'passar_pano_banheiro' }}"
-            sequence:
-              - action: script.passar_pano_banheiro
-          - conditions: "{{ command == 'passar_pano_banheiro_1' }}"
-            sequence:
-              - action: script.passar_pano_banheiro_1
-          - conditions: "{{ command == 'passar_pano_corredor' }}"
-            sequence:
-              - action: script.passar_pano_corredor
-          - conditions: "{{ command == 'passar_pano_casa_toda' }}"
-            sequence:
-              - action: script.passar_pano_casa_toda
-          - conditions: "{{ command in ['parar_aspirador', 'parar', 'parar_robo', 'stop'] }}"
-            sequence:
-              - action: script.parar_aspirador
-          - conditions: "{{ command in ['cancelar_limpeza', 'voltar_base', 'ir_para_base'] }}"
+              - action: script.limpeza_completa
+
+          - conditions: "{{ command == 'cancelar_limpeza' }}"
             sequence:
               - action: script.cancelar_limpeza
-          - conditions: "{{ command == 'limpar_tudo' }}"
-            sequence:
-              - action: script.limpar_tudo
+
         default:
           - action: system_log.write
             data:
               level: warning
               logger: alexa_robot_webhook
-              message: "Comando Alexa ignorado: {{ command }}"
+              message: "Comando Alexa ignorado: action={{ command }} room={{ room }}"
