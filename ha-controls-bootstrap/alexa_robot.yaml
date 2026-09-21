@@ -63,6 +63,22 @@ input_boolean:
     name: "Limpeza do Robô Ativa"
     icon: mdi:robot-vacuum
 
+  robot_alexa_notifications_enabled:
+    name: "Avisos do H50 Pro na Alexa"
+    icon: mdi:account-voice
+
+  robot_alexa_eta_enabled:
+    name: "Avisar início e previsão de término"
+    icon: mdi:clock-outline
+
+  robot_alexa_completion_enabled:
+    name: "Avisar conclusão da limpeza"
+    icon: mdi:check-circle-outline
+
+  robot_alexa_notifications_initialized:
+    name: "Configuração de avisos inicializada"
+    icon: mdi:cog-check
+
 input_text:
   robot_cleaning_target:
     name: "Alvo atual da limpeza"
@@ -181,6 +197,25 @@ input_number:
     mode: box
 
 automation:
+  - id: robot_alexa_notification_defaults
+    alias: "Robô - Inicializar preferências de avisos"
+    mode: single
+    trigger:
+      - platform: homeassistant
+        event: start
+    condition:
+      - condition: state
+        entity_id: input_boolean.robot_alexa_notifications_initialized
+        state: "off"
+    action:
+      - action: input_boolean.turn_on
+        target:
+          entity_id:
+            - input_boolean.robot_alexa_notifications_enabled
+            - input_boolean.robot_alexa_eta_enabled
+            - input_boolean.robot_alexa_completion_enabled
+            - input_boolean.robot_alexa_notifications_initialized
+
   - id: alexa_robot_webhook
     alias: "Alexa - Controle do Robô"
     mode: queued
@@ -325,7 +360,11 @@ automation:
 
       - if:
           - condition: template
-            value_template: "{{ announce_entity is string and announce_entity.startswith('notify.') }}"
+            value_template: >-
+              {{ announce_entity is string
+                 and announce_entity.startswith('notify.')
+                 and is_state('input_boolean.robot_alexa_notifications_enabled', 'on')
+                 and is_state('input_boolean.robot_alexa_completion_enabled', 'on') }}
         then:
           - action: notify.send_message
             target:
