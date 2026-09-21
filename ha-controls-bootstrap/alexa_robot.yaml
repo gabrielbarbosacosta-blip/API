@@ -1,3 +1,63 @@
+template:
+  - sensor:
+      - name: "Alexa Devices Last Called"
+        unique_id: alexa_devices_last_called
+        state: >
+          {{
+            integration_entities('alexa_devices')
+              | select('match', '^event\\.')
+              | select('has_value')
+              | map('states')
+              | sort
+              | last
+          }}
+        attributes:
+          event_entity: >
+            {{
+              integration_entities('alexa_devices')
+                | select('match', '^event\\.')
+                | select('has_value')
+                | select('is_state', this.state)
+                | first
+                | default(none)
+            }}
+          voice_command: >
+            {{ state_attr(this.attributes.event_entity, 'voice_command') }}
+          voice_reply: >
+            {{ state_attr(this.attributes.event_entity, 'voice_reply') }}
+          notify_announce: >
+            {% set event_entity = this.attributes.event_entity %}
+            {% set dev = device_id(event_entity) if event_entity else none %}
+            {{
+              device_entities(dev)
+                | select('match', '^notify\\..*_announce$')
+                | first
+                | default(none)
+              if dev else none
+            }}
+          notify_speak: >
+            {% set event_entity = this.attributes.event_entity %}
+            {% set dev = device_id(event_entity) if event_entity else none %}
+            {{
+              device_entities(dev)
+                | select('match', '^notify\\..*_speak$')
+                | first
+                | default(none)
+              if dev else none
+            }}
+          media_player: >
+            {% set event_entity = this.attributes.event_entity %}
+            {% set dev = device_id(event_entity) if event_entity else none %}
+            {{
+              device_entities(dev)
+                | select('match', '^media_player\\.')
+                | first
+                | default(none)
+              if dev else none
+            }}
+          device_id: >
+            {{ device_id(this.attributes.event_entity) if this.attributes.event_entity else none }}
+
 input_boolean:
   robot_cleaning_active:
     name: "Limpeza do Robô Ativa"
