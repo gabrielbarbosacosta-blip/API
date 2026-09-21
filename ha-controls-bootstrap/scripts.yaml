@@ -1,59 +1,16 @@
-vacuum_helper_clean_rooms:
-  alias: "[helper] Aspirador - limpar cômodos"
+limpar_comodo:
+  alias: "Limpar Cômodo"
   icon: mdi:robot-vacuum
   mode: single
   fields:
-    rooms:
-      name: IDs dos cômodos
+    room_id:
+      name: ID do cômodo
       required: true
       selector:
-        object:
-    clean_type:
-      name: Tipo de limpeza
-      default: "Vacuuming"
-      selector:
-        select:
-          options:
-            - "Vacuuming"
-            - "Mopping"
-            - "Vacuuming & Mopping"
-            - "Vacuuming before mopping"
-    suction:
-      name: Potência
-      default: "Standard"
-      selector:
-        select:
-          options:
-            - "Silent"
-            - "Standard"
-            - "Strong"
-            - "Turbo"
-    route:
-      name: Caminho
-      default: "Daily"
-      selector:
-        select:
-          options:
-            - "Quick"
-            - "Daily"
-            - "Careful"
-    passes:
-      name: Número de passagens
-      default: "Once"
-      selector:
-        select:
-          options:
-            - "Once"
-    water:
-      name: Saída de água
-      default: "Off"
-      selector:
-        select:
-          options:
-            - "Off"
-            - "Level 1"
-            - "Level 2"
-            - "Level 3"
+        number:
+          min: 1
+          max: 99
+          mode: box
   sequence:
     - if:
         - condition: not
@@ -62,163 +19,119 @@ vacuum_helper_clean_rooms:
               entity_id: vacuum.xiaomi_us_1194749639_ov42gl
               state: "docked"
       then:
-        - action: button.press
+        - action: vacuum.stop
           target:
-            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+            entity_id: vacuum.xiaomi_us_1194749639_ov42gl
         - delay:
             seconds: 4
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
-      data:
-        option: "{{ clean_type | default('Vacuuming') }}"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_mode_p_2_9
-      data:
-        option: "{{ suction | default('Standard') }}"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74
-      data:
-        option: "{{ route | default('Daily') }}"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
-      data:
-        option: "{{ passes | default('Once') }}"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
-      data:
-        option: "{{ water | default('Off') }}"
-    - delay:
-        seconds: 2
-    - action: system_log.write
-      data:
-        level: warning
-        logger: vacuum_room_debug
-        message: "ROOM_REQUEST rooms={{ rooms | join(',') }} route={{ route | default('Daily') }} passes={{ passes | default('Once') }} water={{ water | default('Off') }} map={{ states('sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16') }}"
-    - action: notify.send_message
-      target:
-        entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
-      data:
-        message: "{{ rooms | join(',') }}"
-    - delay:
-        seconds: 1
-    - action: system_log.write
-      data:
-        level: warning
-        logger: vacuum_room_debug
-        message: "ROOM_RESULT requested={{ rooms | join(',') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
 
-limpar_tudo:
-  alias: "Limpar Tudo"
-  icon: mdi:robot-vacuum
-  mode: single
-  sequence:
-    - if:
-        - condition: not
-          conditions:
-            - condition: state
-              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
-              state: "docked"
-      then:
-        - action: button.press
-          target:
-            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
-        - delay:
-            seconds: 4
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
       data:
         option: "Vacuuming before mopping"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mode_p_2_9
       data:
         option: "Standard"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74
       data:
         option: "Careful"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
       data:
         option: "Once"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
       data:
         option: "Level 3"
+
     - delay:
         seconds: 2
+
     - action: system_log.write
       data:
         level: warning
-        logger: vacuum_full_clean_debug
-        message: "FULL_CLEAN mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
-    - action: vacuum.start
-      target:
-        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+        logger: vacuum_clean_debug
+        message: "CLEAN_ROOM room_id={{ room_id }} mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
 
-aspirar_tudo:
-  alias: "Aspirar Tudo"
-  icon: mdi:vacuum
+    - action: notify.send_message
+      target:
+        entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
+      data:
+        message: "{{ room_id | int }}"
+
+
+limpeza_completa:
+  alias: "Limpeza Completa"
+  icon: mdi:home-heart
   mode: single
   sequence:
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+              state: "docked"
+      then:
+        - action: vacuum.stop
+          target:
+            entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+        - delay:
+            seconds: 4
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
       data:
-        option: "Vacuuming"
+        option: "Vacuuming before mopping"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mode_p_2_9
       data:
         option: "Standard"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74
       data:
-        option: "Daily"
+        option: "Careful"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
       data:
         option: "Once"
+
     - action: select.select_option
       target:
         entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
       data:
-        option: "Off"
-    - action: button.press
-      target:
-        entity_id: button.xiaomi_us_1194749639_ov42gl_start_only_sweep_a_2_4
+        option: "Level 3"
 
-parar_aspirador:
-  alias: "Parar Aspirador"
-  icon: mdi:stop-circle-outline
-  mode: single
-  sequence:
-    - action: system_log.write
-      data:
-        level: warning
-        logger: vacuum_stop_debug
-        message: "STOP_REQUEST state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
-    - action: vacuum.stop
-      target:
-        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
     - delay:
         seconds: 2
+
     - action: system_log.write
       data:
         level: warning
-        logger: vacuum_stop_debug
-        message: "STOP_RESULT state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
+        logger: vacuum_clean_debug
+        message: "FULL_CLEAN mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
+
+    - action: vacuum.start
+      target:
+        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+
 
 cancelar_limpeza:
   alias: "Cancelar Limpeza"
@@ -230,278 +143,16 @@ cancelar_limpeza:
         level: warning
         logger: vacuum_cancel_debug
         message: "CANCEL_REQUEST state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }}"
+
     - action: vacuum.return_to_base
       target:
         entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+
     - delay:
         seconds: 2
+
     - action: system_log.write
       data:
         level: warning
         logger: vacuum_cancel_debug
         message: "CANCEL_RESULT state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }}"
-
-aspirar_sala:
-  alias: "Aspirar Sala"
-  icon: mdi:sofa
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [3]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_quarto:
-  alias: "Aspirar Quarto"
-  icon: mdi:bed
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [4]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_escritorio:
-  alias: "Aspirar Escritório"
-  icon: mdi:desk
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [5]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_cozinha:
-  alias: "Aspirar Cozinha"
-  icon: mdi:countertop-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [10]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_varanda:
-  alias: "Aspirar Varanda"
-  icon: mdi:balcony
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [6]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_banheiro:
-  alias: "Aspirar Banheiro"
-  icon: mdi:shower
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [7]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_banheiro_1:
-  alias: "Aspirar Banheiro 1"
-  icon: mdi:shower-head
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [8]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-aspirar_corredor:
-  alias: "Aspirar Corredor"
-  icon: mdi:floor-plan
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [9]
-        clean_type: "Vacuuming"
-        suction: "Standard"
-        route: "Daily"
-        passes: "Once"
-        water: "Off"
-
-passar_pano_sala:
-  alias: "Passar Pano na Sala"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [3]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_quarto:
-  alias: "Passar Pano no Quarto"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [4]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_escritorio:
-  alias: "Passar Pano no Escritório"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [5]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_cozinha:
-  alias: "Passar Pano na Cozinha"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [10]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_varanda:
-  alias: "Passar Pano na Varanda"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [6]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_banheiro:
-  alias: "Passar Pano no Banheiro"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [7]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_banheiro_1:
-  alias: "Passar Pano no Banheiro 1"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [8]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_corredor:
-  alias: "Passar Pano no Corredor"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - action: script.vacuum_helper_clean_rooms
-      data:
-        rooms: [9]
-        clean_type: "Mopping"
-        suction: "Standard"
-        route: "Careful"
-        passes: "Once"
-        water: "Level 3"
-
-passar_pano_casa_toda:
-  alias: "Passar Pano na Casa Toda"
-  icon: mdi:bucket-outline
-  mode: single
-  sequence:
-    - if:
-        - condition: not
-          conditions:
-            - condition: state
-              entity_id: vacuum.xiaomi_us_1194749639_ov42gl
-              state: "docked"
-      then:
-        - action: button.press
-          target:
-            entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
-        - delay:
-            seconds: 4
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4
-      data:
-        option: "Mopping"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74
-      data:
-        option: "Careful"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_clean_times_p_2_8
-      data:
-        option: "Once"
-    - action: select.select_option
-      target:
-        entity_id: select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10
-      data:
-        option: "Level 3"
-    - action: button.press
-      target:
-        entity_id: button.xiaomi_us_1194749639_ov42gl_start_mop_a_2_5
