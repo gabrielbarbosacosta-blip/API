@@ -154,3 +154,48 @@ views:
             name: Total de limpezas
           - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_duration_p_2_87
             name: Tempo total de limpeza
+
+
+  - title: Notificações
+    path: notificacoes
+    icon: mdi:bell-cog
+    cards:
+      - type: markdown
+        content: |
+          # Avisos na Alexa
+          Escolha quais mensagens do H50 Pro serão anunciadas. Essas opções não alteram os comandos ou a configuração de limpeza do robô.
+
+      - type: entities
+        title: Configuração
+        show_header_toggle: false
+        entities:
+          - entity: input_boolean.robot_alexa_notifications_enabled
+            name: Avisos na Alexa
+            icon: mdi:account-voice
+          - type: divider
+          - entity: input_boolean.robot_alexa_eta_enabled
+            name: Início + tempo previsto
+            icon: mdi:clock-outline
+          - entity: input_boolean.robot_alexa_completion_enabled
+            name: Limpeza concluída
+            icon: mdi:check-circle-outline
+
+      - type: entities
+        title: Teste e diagnóstico
+        show_header_toggle: false
+        entities:
+          - entity: script.testar_notificacao_alexa
+            name: Testar aviso na Alexa
+            icon: mdi:bullhorn
+          - entity: sensor.alexa_devices_last_called
+            name: Último Echo detectado
+            icon: mdi:amazon-alexa
+
+      - type: markdown
+        content: |
+          **Como funciona**
+          
+          - **Avisos na Alexa** é a chave geral.
+          - **Início + tempo previsto** controla o anúncio feito alguns segundos após começar uma limpeza.
+          - **Limpeza concluída** controla o aviso quando o robô retorna à base após concluir.
+          - O botão **Testar aviso na Alexa** não movimenta o robô; apenas reproduz uma mensagem de teste.
