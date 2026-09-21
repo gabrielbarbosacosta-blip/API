@@ -11,6 +11,18 @@ limpar_comodo:
           min: 1
           max: 99
           mode: box
+  variables:
+    cleaning_target: >-
+      {% set rooms = {
+        3: 'sala',
+        4: 'quarto',
+        5: 'escritorio',
+        10: 'cozinha',
+        7: 'banheiro',
+        8: 'banheiro_1',
+        9: 'corredor'
+      } %}
+      {{ rooms.get(room_id | int, 'comodo') }}
   sequence:
     - if:
         - condition: not
@@ -64,6 +76,18 @@ limpar_comodo:
         logger: vacuum_clean_debug
         message: "CLEAN_ROOM room_id={{ room_id }} mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
 
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.robot_cleaning_target
+      data:
+        value: "{{ cleaning_target }}"
+
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.robot_cleaning_started_ts
+      data:
+        value: "{{ as_timestamp(now()) | int }}"
+
     - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.robot_cleaning_active
@@ -73,6 +97,13 @@ limpar_comodo:
         entity_id: notify.xiaomi_us_1194749639_ov42gl_start_vacuum_room_sweep_a_2_16
       data:
         message: "{{ room_id | int }}"
+
+    - action: script.turn_on
+      target:
+        entity_id: script.anunciar_previsao_limpeza
+      data:
+        variables:
+          target: "{{ cleaning_target }}"
 
 
 limpeza_completa:
@@ -132,6 +163,18 @@ limpeza_completa:
         logger: vacuum_clean_debug
         message: "FULL_CLEAN mode={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_mop_type_p_2_4') }} route={{ states('select.xiaomi_us_1194749639_ov42gl_sweep_route_p_2_74') }} water={{ states('select.xiaomi_us_1194749639_ov42gl_mop_water_output_level_p_2_10') }}"
 
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.robot_cleaning_target
+      data:
+        value: "limpeza_completa"
+
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.robot_cleaning_started_ts
+      data:
+        value: "{{ as_timestamp(now()) | int }}"
+
     - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.robot_cleaning_active
@@ -139,6 +182,103 @@ limpeza_completa:
     - action: vacuum.start
       target:
         entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+
+    - action: script.turn_on
+      target:
+        entity_id: script.anunciar_previsao_limpeza
+      data:
+        variables:
+          target: "limpeza_completa"
+
+
+anunciar_previsao_limpeza:
+  alias: "Anunciar previsão da limpeza"
+  icon: mdi:clock-outline
+  mode: parallel
+  max: 5
+  fields:
+    target:
+      name: Alvo da limpeza
+      required: true
+      selector:
+        text:
+  variables:
+    avg_entity: >-
+      {% set m = {
+        'sala': 'input_number.robot_avg_sala_minutes',
+        'quarto': 'input_number.robot_avg_quarto_minutes',
+        'escritorio': 'input_number.robot_avg_escritorio_minutes',
+        'cozinha': 'input_number.robot_avg_cozinha_minutes',
+        'banheiro': 'input_number.robot_avg_banheiro_minutes',
+        'banheiro_1': 'input_number.robot_avg_banheiro_1_minutes',
+        'corredor': 'input_number.robot_avg_corredor_minutes',
+        'limpeza_completa': 'input_number.robot_avg_limpeza_completa_minutes'
+      } %}
+      {{ m.get(target, '') }}
+    learned_minutes: >-
+      {{ states(avg_entity) | float(0) if avg_entity else 0 }}
+    fallback_minutes: >-
+      {% set m = {
+        'sala': 20,
+        'quarto': 20,
+        'escritorio': 20,
+        'cozinha': 20,
+        'banheiro': 15,
+        'banheiro_1': 15,
+        'corredor': 15,
+        'limpeza_completa': 120
+      } %}
+      {{ m.get(target, 20) }}
+    estimated_minutes: >-
+      {{ (learned_minutes | float(0) if (learned_minutes | float(0)) > 0 else fallback_minutes | float(20)) | round(0) | int }}
+    target_spoken: >-
+      {% set m = {
+        'sala': 'da sala',
+        'quarto': 'do quarto',
+        'escritorio': 'do escritório',
+        'cozinha': 'da cozinha',
+        'banheiro': 'do banheiro',
+        'banheiro_1': 'do segundo banheiro',
+        'corredor': 'do corredor',
+        'limpeza_completa': 'completa'
+      } %}
+      {{ m.get(target, '') }}
+    finish_time: >-
+      {{ (as_timestamp(now()) + (estimated_minutes | int) * 60) | timestamp_custom('%H:%M', true) }}
+  sequence:
+    - delay:
+        seconds: 5
+
+    - variables:
+        announce_entity: "{{ state_attr('sensor.alexa_devices_last_called', 'notify_announce') | default('', true) }}"
+
+    - if:
+        - condition: template
+          value_template: >-
+            {{ announce_entity is string
+               and announce_entity.startswith('notify.')
+               and is_state('input_boolean.robot_cleaning_active', 'on')
+               and states('input_text.robot_cleaning_target') == target }}
+      then:
+        - action: notify.send_message
+          target:
+            entity_id: "{{ announce_entity }}"
+          data:
+            message: >-
+              A limpeza {{ target_spoken }} foi iniciada.
+              O tempo estimado é de {{ estimated_minutes }} minutos,
+              com conclusão prevista para {{ finish_time }}.
+        - action: system_log.write
+          data:
+            level: warning
+            logger: vacuum_eta_announce
+            message: "ETA_ANNOUNCED target={{ target }} estimate={{ estimated_minutes }} finish={{ finish_time }} learned={{ learned_minutes }}"
+      else:
+        - action: system_log.write
+          data:
+            level: warning
+            logger: vacuum_eta_announce
+            message: "ETA_SKIPPED target={{ target }} announce_entity={{ announce_entity }}"
 
 
 cancelar_limpeza:
