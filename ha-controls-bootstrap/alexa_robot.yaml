@@ -1,3 +1,8 @@
+input_boolean:
+  robot_cleaning_active:
+    name: "Limpeza do Robô Ativa"
+    icon: mdi:robot-vacuum
+
 automation:
   - id: alexa_robot_webhook
     alias: "Alexa - Controle do Robô"
@@ -51,3 +56,43 @@ automation:
               level: warning
               logger: alexa_robot_webhook
               message: "Comando Alexa ignorado: action={{ command }} room={{ room }}"
+
+  - id: robot_cleaning_completed_announce
+    alias: "Robô - Avisar conclusão da limpeza"
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: vacuum.xiaomi_us_1194749639_ov42gl
+        to: "docked"
+
+    condition:
+      - condition: state
+        entity_id: input_boolean.robot_cleaning_active
+        state: "on"
+
+    variables:
+      announce_entity: "{{ state_attr('sensor.alexa_devices_last_called', 'notify_announce') | default('', true) }}"
+
+    action:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.robot_cleaning_active
+
+      - delay:
+          seconds: 2
+
+      - if:
+          - condition: template
+            value_template: "{{ announce_entity is string and announce_entity.startswith('notify.') }}"
+        then:
+          - action: notify.send_message
+            target:
+              entity_id: "{{ announce_entity }}"
+            data:
+              message: "A limpeza foi concluída e o robô retornou para a base."
+        else:
+          - action: system_log.write
+            data:
+              level: warning
+              logger: vacuum_completion_announce
+              message: "Limpeza concluída, mas nenhum dispositivo Alexa Announce foi encontrado. Configure a integração Alexa Devices."
