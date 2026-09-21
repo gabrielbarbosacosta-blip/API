@@ -199,9 +199,21 @@ parar_aspirador:
   icon: mdi:stop-circle-outline
   mode: single
   sequence:
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_stop_debug
+        message: "STOP_REQUEST state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
     - action: button.press
       target:
         entity_id: button.xiaomi_us_1194749639_ov42gl_stop_working_a_2_51
+    - delay:
+        seconds: 1
+    - action: system_log.write
+      data:
+        level: warning
+        logger: vacuum_stop_debug
+        message: "STOP_RESULT state={{ states('vacuum.xiaomi_us_1194749639_ov42gl') }} config={{ states('sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40') }}"
 
 aspirar_sala:
   alias: "Aspirar Sala"
