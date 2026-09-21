@@ -2,6 +2,7 @@
 set -eu
 
 cp /tmp/scripts.yaml /config/scripts.yaml
+cp /tmp/h50_dashboard.yaml /config/h50_dashboard.yaml
 
 mkdir -p /config/packages
 if [ -n "${ALEXA_WEBHOOK_ID:-}" ]; then
@@ -18,6 +19,22 @@ if ! grep -q '^[[:space:]]*packages: !include_dir_named packages$' /config/confi
   else
     printf '\nhomeassistant:\n  packages: !include_dir_named packages\n' >> /config/configuration.yaml
   fi
+fi
+
+
+if ! grep -q '^lovelace: /config/configuration.yaml; then
+  cat >> /config/configuration.yaml <<'EOF'
+
+lovelace:
+  mode: storage
+  dashboards:
+    h50-pro:
+      mode: yaml
+      title: H50 Pro
+      icon: mdi:robot-vacuum
+      show_in_sidebar: true
+      filename: h50_dashboard.yaml
+EOF
 fi
 
 exec /init
