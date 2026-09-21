@@ -1,0 +1,156 @@
+title: H50 Pro
+views:
+  - title: Visão geral
+    path: geral
+    icon: mdi:robot-vacuum
+    cards:
+      - type: markdown
+        content: |
+          # H50 Pro
+          Estado, limpeza, água, base e manutenção do robô.
+
+      - type: entities
+        title: Controle
+        show_header_toggle: false
+        entities:
+          - entity: script.limpeza_completa
+            name: Limpeza completa
+            icon: mdi:home-heart
+          - entity: script.cancelar_limpeza
+            name: Cancelar e retornar à base
+            icon: mdi:home-import-outline
+
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_battery_level_p_3_1
+            name: Bateria
+            min: 0
+            max: 100
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_progress_p_2_89
+            name: Progresso
+            min: 0
+            max: 100
+
+      - type: entities
+        title: Limpeza atual
+        show_header_toggle: false
+        entities:
+          - entity: vacuum.xiaomi_us_1194749639_ov42gl
+            name: Estado do robô
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_sweep_mop_status_p_2_96
+            name: Modo / estado da limpeza
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_area_p_2_6
+            name: Área limpa
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_time_p_2_7
+            name: Tempo de limpeza
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_last_clean_time_p_2_17
+            name: Última limpeza
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40
+            name: Configuração atual
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_charging_state_p_3_2
+            name: Estado de carregamento
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_voltage_p_3_3
+            name: Tensão da bateria
+
+      - type: entities
+        title: Água e base
+        show_header_toggle: false
+        entities:
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_base_station_working_status_p_2_18
+            name: Estado da base
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_water_tank_status_p_2_98
+            name: Reservatório de água
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_base_station_water_tank_status_p_2_100
+            name: Tanque de água da base
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_host_water_tank_status_p_2_101
+            name: Tanque do robô
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_sewage_tank_status_p_2_97
+            name: Tanque de água suja
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_drying_progress_p_2_88
+            name: Progresso da secagem
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_dry_left_time_p_2_90
+            name: Tempo restante da secagem
+
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_brush_life_level_p_12_1
+            name: Escova principal
+            min: 0
+            max: 100
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_brush_life_level_p_13_1
+            name: Escova secundária
+            min: 0
+            max: 100
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_filter_life_level_p_14_1
+            name: Filtro
+            min: 0
+            max: 100
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_mop_life_level_p_9_1
+            name: Mop
+            min: 0
+            max: 100
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_detergent_left_level_p_18_1
+            name: Detergente
+            min: 0
+            max: 100
+          - type: gauge
+            entity: sensor.xiaomi_us_1194749639_ov42gl_dust_bag_life_level_p_19_1
+            name: Saco de pó
+            min: 0
+            max: 100
+
+      - type: entities
+        title: Manutenção
+        show_header_toggle: false
+        entities:
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_brush_left_time_p_12_2
+            name: Tempo restante — escova principal
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_brush_left_time_p_13_2
+            name: Tempo restante — escova secundária
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_filter_left_time_p_14_2
+            name: Tempo restante — filtro
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_mop_left_time_p_9_2
+            name: Tempo restante — mop
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_detergent_left_time_p_18_4
+            name: Tempo restante — detergente
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_dust_bag_left_time_p_19_2
+            name: Tempo restante — saco de pó
+
+      - type: entities
+        title: Diagnóstico e mapa
+        show_header_toggle: false
+        entities:
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_fault_p_2_3
+            name: Falha atual
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_fault_ids_p_2_66
+            name: IDs de falha
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_action_result_p_2_67
+            name: Resultado da última ação
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16
+            name: Cômodos do mapa
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_vacuum_position_p_10_4
+            name: Posição do robô
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_current_map_id_p_10_6
+            name: Mapa atual
+
+      - type: entities
+        title: Estatísticas
+        show_header_toggle: false
+        entities:
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_clean_area_p_2_85
+            name: Área total limpa
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_times_p_2_86
+            name: Total de limpezas
+          - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_duration_p_2_87
+            name: Tempo total de limpeza
