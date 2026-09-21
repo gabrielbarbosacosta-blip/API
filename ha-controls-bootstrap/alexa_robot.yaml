@@ -12,6 +12,11 @@ automation:
     variables:
       command: "{{ trigger.json.action | default('') }}"
     action:
+      - action: system_log.write
+        data:
+          level: warning
+          logger: alexa_robot_webhook
+          message: "WEBHOOK_COMMAND action={{ command }}"
       - choose:
           - conditions: "{{ command == 'aspirar_sala' }}"
             sequence:
@@ -67,7 +72,7 @@ automation:
           - conditions: "{{ command == 'passar_pano_casa_toda' }}"
             sequence:
               - action: script.passar_pano_casa_toda
-          - conditions: "{{ command == 'parar_aspirador' }}"
+          - conditions: "{{ command in ['parar_aspirador', 'parar', 'parar_robo', 'stop'] }}"
             sequence:
               - action: script.parar_aspirador
           - conditions: "{{ command == 'limpar_tudo' }}"
