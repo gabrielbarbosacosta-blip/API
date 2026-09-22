@@ -1,201 +1,429 @@
 title: H50 Pro
 views:
-  - title: Visão geral
-    path: geral
-    icon: mdi:robot-vacuum
+- title: Acompanhamento
+  path: geral
+  icon: mdi:robot-vacuum
+  type: sections
+  max_columns: 3
+  header:
+    layout: start
+    card:
+      type: markdown
+      content: '# Casa em ordem
+
+        Ronaldo Júnior · Xiaomi H50 Pro'
+  sections:
+  - type: grid
     cards:
-      - type: markdown
-        content: |
-          # H50 Pro
-          Estado, limpeza, água, base e manutenção do robô.
+    - type: heading
+      heading: Ronaldo Júnior
+      icon: mdi:robot-vacuum
+      heading_style: title
+    - type: markdown
+      content: '{% set s = states(''vacuum.xiaomi_us_1194749639_ov42gl'') %}
 
-      - type: entities
-        title: Controle
-        show_header_toggle: false
-        entities:
-          - entity: script.limpeza_completa
-            name: Limpeza completa
-            icon: mdi:home-heart
-          - entity: script.cancelar_limpeza
-            name: Cancelar e retornar à base
-            icon: mdi:home-import-outline
+        {% set labels = {''docked'':''Na base'',''cleaning'':''Limpeza em andamento'',''paused'':''Limpeza pausada'',''returning'':''Voltando
+        à base'',''idle'':''Em espera'',''error'':''Precisa de atenção'',''unavailable'':''Sem conexão'',''unknown'':''Aguardando
+        dados''} %}
 
-      - type: grid
-        columns: 2
-        square: false
-        cards:
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_battery_level_p_3_1
-            name: Bateria
-            min: 0
-            max: 100
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_progress_p_2_89
-            name: Progresso
-            min: 0
-            max: 100
+        # {{ labels.get(s, s) }}
 
-      - type: entities
-        title: Limpeza atual
-        show_header_toggle: false
-        entities:
-          - entity: vacuum.xiaomi_us_1194749639_ov42gl
-            name: Estado do robô
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_sweep_mop_status_p_2_96
-            name: Modo / estado da limpeza
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_area_p_2_6
-            name: Área limpa
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_time_p_2_7
-            name: Tempo de limpeza
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_last_clean_time_p_2_17
-            name: Última limpeza
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40
-            name: Configuração atual
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_charging_state_p_3_2
-            name: Estado de carregamento
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_voltage_p_3_3
-            name: Tensão da bateria
-
-      - type: entities
-        title: Água e base
-        show_header_toggle: false
-        entities:
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_base_station_working_status_p_2_18
-            name: Estado da base
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_water_tank_status_p_2_98
-            name: Reservatório de água
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_base_station_water_tank_status_p_2_100
-            name: Tanque de água da base
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_host_water_tank_status_p_2_101
-            name: Tanque do robô
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_sewage_tank_status_p_2_97
-            name: Tanque de água suja
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_drying_progress_p_2_88
-            name: Progresso da secagem
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_dry_left_time_p_2_90
-            name: Tempo restante da secagem
-
-      - type: grid
-        columns: 2
-        square: false
-        cards:
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_brush_life_level_p_12_1
-            name: Escova principal
-            min: 0
-            max: 100
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_brush_life_level_p_13_1
-            name: Escova secundária
-            min: 0
-            max: 100
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_filter_life_level_p_14_1
-            name: Filtro
-            min: 0
-            max: 100
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_mop_life_level_p_9_1
-            name: Mop
-            min: 0
-            max: 100
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_detergent_left_level_p_18_1
-            name: Detergente
-            min: 0
-            max: 100
-          - type: gauge
-            entity: sensor.xiaomi_us_1194749639_ov42gl_dust_bag_life_level_p_19_1
-            name: Saco de pó
-            min: 0
-            max: 100
-
-      - type: entities
-        title: Manutenção
-        show_header_toggle: false
-        entities:
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_brush_left_time_p_12_2
-            name: Tempo restante — escova principal
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_brush_left_time_p_13_2
-            name: Tempo restante — escova secundária
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_filter_left_time_p_14_2
-            name: Tempo restante — filtro
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_mop_left_time_p_9_2
-            name: Tempo restante — mop
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_detergent_left_time_p_18_4
-            name: Tempo restante — detergente
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_dust_bag_left_time_p_19_2
-            name: Tempo restante — saco de pó
-
-      - type: entities
-        title: Diagnóstico e mapa
-        show_header_toggle: false
-        entities:
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_fault_p_2_3
-            name: Falha atual
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_fault_ids_p_2_66
-            name: IDs de falha
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_action_result_p_2_67
-            name: Resultado da última ação
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16
-            name: Cômodos do mapa
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_vacuum_position_p_10_4
-            name: Posição do robô
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_current_map_id_p_10_6
-            name: Mapa atual
-
-      - type: entities
-        title: Estatísticas
-        show_header_toggle: false
-        entities:
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_clean_area_p_2_85
-            name: Área total limpa
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_times_p_2_86
-            name: Total de limpezas
-          - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_duration_p_2_87
-            name: Tempo total de limpeza
-
-
-  - title: Notificações
-    path: notificacoes
-    icon: mdi:bell-cog
+        {% if s == ''docked'' %}Pronto para a próxima limpeza.{% elif s == ''cleaning'' %}Acompanhe o andamento ao lado.{%
+        elif s == ''returning'' %}O robô está retornando à estação.{% elif s == ''paused'' %}A tarefa está pausada.{% else
+        %}Acompanhe o estado do seu H50 Pro.{% endif %}'
+      grid_options:
+        columns: 12
+        rows: auto
+    - type: tile
+      entity: vacuum.xiaomi_us_1194749639_ov42gl
+      name: H50 Pro
+      icon: mdi:robot-vacuum
+      color: blue
+      grid_options:
+        columns: 12
+        rows: 1
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_battery_level_p_3_1
+      name: Bateria
+      min: 0
+      max: 100
+      severity:
+        green: 50
+        yellow: 20
+        red: 0
+      grid_options:
+        columns: 12
+        rows: 3
+    - type: button
+      name: Limpeza completa
+      icon: mdi:play-circle-outline
+      entity: script.limpeza_completa
+      show_state: false
+      tap_action:
+        action: perform-action
+        perform_action: script.turn_on
+        target:
+          entity_id: script.limpeza_completa
+      grid_options:
+        columns: 6
+        rows: 2
+    - type: button
+      name: Encerrar limpeza
+      icon: mdi:home-import-outline
+      entity: script.cancelar_limpeza
+      show_state: false
+      tap_action:
+        action: perform-action
+        perform_action: script.turn_on
+        target:
+          entity_id: script.cancelar_limpeza
+      grid_options:
+        columns: 6
+        rows: 2
+  - type: grid
     cards:
-      - type: markdown
-        content: |
-          # Avisos na Alexa
-          Escolha quais mensagens do H50 Pro serão anunciadas. Essas opções não alteram os comandos ou a configuração de limpeza do robô.
+    - type: heading
+      heading: Sua limpeza
+      icon: mdi:progress-clock
+      heading_style: title
+    - type: markdown
+      content: '{% set p = states(''sensor.xiaomi_us_1194749639_ov42gl_cleaning_progress_p_2_89'') | float(-1) %}
 
-      - type: entities
-        title: Configuração
-        show_header_toggle: false
-        entities:
-          - entity: input_boolean.robot_alexa_notifications_enabled
-            name: Avisos na Alexa
-            icon: mdi:account-voice
-          - type: divider
-          - entity: input_boolean.robot_alexa_eta_enabled
-            name: Início + tempo previsto
-            icon: mdi:clock-outline
-          - entity: input_boolean.robot_alexa_completion_enabled
-            name: Limpeza concluída
-            icon: mdi:check-circle-outline
+        {% set s = states(''vacuum.xiaomi_us_1194749639_ov42gl'') %}
 
-      - type: entities
-        title: Teste e diagnóstico
-        show_header_toggle: false
-        entities:
-          - entity: script.testar_notificacao_alexa
-            name: Testar aviso na Alexa
-            icon: mdi:bullhorn
-          - entity: sensor.alexa_devices_last_called
-            name: Último Echo detectado
-            icon: mdi:amazon-alexa
+        ### Andamento
 
-      - type: markdown
-        content: |
-          **Como funciona**
-          
-          - **Avisos na Alexa** é a chave geral.
-          - **Início + tempo previsto** controla o anúncio feito alguns segundos após começar uma limpeza.
-          - **Limpeza concluída** controla o aviso quando o robô retorna à base após concluir.
-          - O botão **Testar aviso na Alexa** não movimenta o robô; apenas reproduz uma mensagem de teste.
+        {% if s in [''cleaning'',''paused'',''returning''] and 0 <= p <= 100 %}
+
+        # {{ p | round(0) | int }}%
+
+        {{ ''Em pausa'' if s == ''paused'' else ''Progresso informado pelo robô'' }}
+
+        {% elif s in [''docked'',''idle''] %}
+
+        # Em espera
+
+        Nenhuma limpeza em execução.
+
+        {% else %}
+
+        # —
+
+        Progresso indisponível no momento.
+
+        {% endif %}'
+      grid_options:
+        columns: 12
+        rows: auto
+    - type: markdown
+      content: '{% set t = states(''sensor.xiaomi_us_1194749639_ov42gl_cleaning_time_p_2_7'') | float(-1) %}
+
+        ### Tempo registrado
+
+        # {{ ((t / 60) | round(1) | string ~ '' min'') if t >= 0 else ''—'' }}
+
+        {% if states(''vacuum.xiaomi_us_1194749639_ov42gl'') in [''docked'',''idle''] %}Duração registrada da última tarefa.{%
+        else %}Tempo informado pelo robô.{% endif %}
+
+
+        {% set last = states(''sensor.xiaomi_us_1194749639_ov42gl_last_clean_time_p_2_17'') | float(0) %}
+
+        **Último início:** {{ last | timestamp_custom(''%d/%m às %H:%M'') if last > 0 else ''Não informado'' }}'
+      grid_options:
+        columns: 12
+        rows: auto
+    - type: markdown
+      content: "{% set f = states('sensor.xiaomi_us_1194749639_ov42gl_fault_p_2_3') %}\n{% if f in ['0','No Fault','no_fault','None','none']\
+        \ %}\n**✓ Nenhuma falha informada**\n{% elif f in ['unknown','unavailable',''] %}\n**Diagnóstico indisponível**\n\
+        {% else %}\n**⚠ O robô precisa de atenção**  \nCódigo informado: {{ f }}. Consulte a aba Detalhes.\n{% endif %}"
+      grid_options:
+        columns: 12
+        rows: auto
+  - type: grid
+    cards:
+    - type: heading
+      heading: Água e base
+      icon: mdi:water-outline
+      heading_style: title
+    - type: markdown
+      content: "{% set water = states('sensor.xiaomi_us_1194749639_ov42gl_water_tank_status_p_2_98') | lower %}\n{% set sewage\
+        \ = states('sensor.xiaomi_us_1194749639_ov42gl_sewage_tank_status_p_2_97') | lower %}\n### Reservatórios\n**Água limpa**\
+        \  \n{{ {'not empty':'Água disponível','not_empty':'Água disponível','empty':'Reabastecer','unknown':'Não informado','unavailable':'Indisponível'}.get(water,water)\
+        \ }}\n\n---\n\n**Água suja**  \n{{ {'not full':'Ainda não está cheio','not_full':'Ainda não está cheio','full':'Esvaziar\
+        \ reservatório','unknown':'Não informado','unavailable':'Indisponível'}.get(sewage,sewage) }}"
+      grid_options:
+        columns: 12
+        rows: auto
+    - type: markdown
+      content: '{% set t = states(''sensor.xiaomi_us_1194749639_ov42gl_dry_left_time_p_2_90'') | float(-1) %}
+
+        ### Secagem dos mops
+
+        {% if t > 0 %}
+
+        # {{ t | round(0) | int }} min
+
+        Tempo restante informado pela base.
+
+        {% elif t == 0 %}
+
+        **Sem secagem pendente**
+
+        {% else %}
+
+        Estado indisponível.
+
+        {% endif %}'
+      grid_options:
+        columns: 12
+        rows: auto
+    - type: button
+      name: Preferências de avisos na Alexa
+      icon: mdi:bell-cog-outline
+      tap_action:
+        action: navigate
+        navigation_path: /h50-pro/notificacoes
+      grid_options:
+        columns: 12
+        rows: 2
+- title: Manutenção
+  path: manutencao
+  icon: mdi:tools
+  type: sections
+  max_columns: 2
+  header:
+    layout: start
+    card:
+      type: markdown
+      content: '# Cuide de quem cuida da casa
+
+        Vida útil e tempo restante dos consumíveis.'
+  sections:
+  - type: grid
+    cards:
+    - type: heading
+      heading: Vida útil restante
+      icon: mdi:shield-check-outline
+      heading_style: title
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_brush_life_level_p_12_1
+      name: Escova principal
+      min: 0
+      max: 100
+      severity:
+        red: 0
+        yellow: 20
+        green: 50
+      grid_options:
+        columns: 6
+        rows: 3
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_brush_life_level_p_13_1
+      name: Escova secundária
+      min: 0
+      max: 100
+      severity:
+        red: 0
+        yellow: 20
+        green: 50
+      grid_options:
+        columns: 6
+        rows: 3
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_filter_life_level_p_14_1
+      name: Filtro
+      min: 0
+      max: 100
+      severity:
+        red: 0
+        yellow: 20
+        green: 50
+      grid_options:
+        columns: 6
+        rows: 3
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_mop_life_level_p_9_1
+      name: Mop
+      min: 0
+      max: 100
+      severity:
+        red: 0
+        yellow: 20
+        green: 50
+      grid_options:
+        columns: 6
+        rows: 3
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_detergent_left_level_p_18_1
+      name: Detergente
+      min: 0
+      max: 100
+      severity:
+        red: 0
+        yellow: 20
+        green: 50
+      grid_options:
+        columns: 6
+        rows: 3
+    - type: gauge
+      entity: sensor.xiaomi_us_1194749639_ov42gl_dust_bag_life_level_p_19_1
+      name: Saco de pó
+      min: 0
+      max: 100
+      severity:
+        red: 0
+        yellow: 20
+        green: 50
+      grid_options:
+        columns: 6
+        rows: 3
+  - type: grid
+    cards:
+    - type: heading
+      heading: Próximas trocas
+      icon: mdi:calendar-clock
+      heading_style: title
+    - type: entities
+      title: Manutenção
+      show_header_toggle: false
+      entities:
+      - entity: sensor.xiaomi_us_1194749639_ov42gl_brush_left_time_p_12_2
+        name: Tempo restante — escova principal
+      - entity: sensor.xiaomi_us_1194749639_ov42gl_brush_left_time_p_13_2
+        name: Tempo restante — escova secundária
+      - entity: sensor.xiaomi_us_1194749639_ov42gl_filter_left_time_p_14_2
+        name: Tempo restante — filtro
+      - entity: sensor.xiaomi_us_1194749639_ov42gl_mop_left_time_p_9_2
+        name: Tempo restante — mop
+      - entity: sensor.xiaomi_us_1194749639_ov42gl_detergent_left_time_p_18_4
+        name: Tempo restante — detergente
+      - entity: sensor.xiaomi_us_1194749639_ov42gl_dust_bag_left_time_p_19_2
+        name: Tempo restante — saco de pó
+    - type: markdown
+      content: Os percentuais são estimativas informadas pelo robô. Confira as peças durante a limpeza periódica.
+      grid_options:
+        columns: 12
+        rows: auto
+- title: Notificações
+  path: notificacoes
+  icon: mdi:bell-cog
+  cards:
+  - type: markdown
+    content: '# Avisos na Alexa
+
+      Escolha quais mensagens do H50 Pro serão anunciadas. Essas opções não alteram os comandos ou a configuração de limpeza
+      do robô.
+
+      '
+  - type: entities
+    title: Configuração
+    show_header_toggle: false
+    entities:
+    - entity: input_boolean.robot_alexa_notifications_enabled
+      name: Avisos na Alexa
+      icon: mdi:account-voice
+    - type: divider
+    - entity: input_boolean.robot_alexa_eta_enabled
+      name: Início + tempo previsto
+      icon: mdi:clock-outline
+    - entity: input_boolean.robot_alexa_completion_enabled
+      name: Limpeza concluída
+      icon: mdi:check-circle-outline
+  - type: entities
+    title: Teste e diagnóstico
+    show_header_toggle: false
+    entities:
+    - entity: script.testar_notificacao_alexa
+      name: Testar aviso na Alexa
+      icon: mdi:bullhorn
+    - entity: sensor.alexa_devices_last_called
+      name: Último Echo detectado
+      icon: mdi:amazon-alexa
+  - type: markdown
+    content: '**Como funciona**
+
+
+      - **Avisos na Alexa** é a chave geral.
+
+      - **Início + tempo previsto** controla o anúncio feito alguns segundos após começar uma limpeza.
+
+      - **Limpeza concluída** controla o aviso quando o robô retorna à base após concluir.
+
+      - O botão **Testar aviso na Alexa** não movimenta o robô; apenas reproduz uma mensagem de teste.
+
+      '
+- title: Detalhes
+  path: detalhes
+  icon: mdi:information-outline
+  cards:
+  - type: markdown
+    content: '# Informações do dispositivo
+
+      Leituras originais para consultar o diagnóstico e os dados do mapa.'
+    grid_options:
+      columns: 12
+      rows: auto
+  - type: entities
+    title: Diagnóstico e mapa
+    show_header_toggle: false
+    entities:
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_fault_p_2_3
+      name: Falha atual
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_fault_ids_p_2_66
+      name: IDs de falha
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_action_result_p_2_67
+      name: Resultado da última ação
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_room_information_p_2_16
+      name: Cômodos do mapa
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_vacuum_position_p_10_4
+      name: Posição do robô
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_current_map_id_p_10_6
+      name: Mapa atual
+  - type: entities
+    title: Limpeza atual
+    show_header_toggle: false
+    entities:
+    - entity: vacuum.xiaomi_us_1194749639_ov42gl
+      name: Estado do robô
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_sweep_mop_status_p_2_96
+      name: Modo / estado da limpeza
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_area_p_2_6
+      name: Área limpa
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_cleaning_time_p_2_7
+      name: Tempo de limpeza
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_last_clean_time_p_2_17
+      name: Última limpeza
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_current_cleaning_config_p_2_40
+      name: Configuração atual
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_charging_state_p_3_2
+      name: Estado de carregamento
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_voltage_p_3_3
+      name: Tensão da bateria
+  - type: entities
+    title: Água e base
+    show_header_toggle: false
+    entities:
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_base_station_working_status_p_2_18
+      name: Estado da base
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_water_tank_status_p_2_98
+      name: Reservatório de água
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_base_station_water_tank_status_p_2_100
+      name: Tanque de água da base
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_host_water_tank_status_p_2_101
+      name: Tanque do robô
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_sewage_tank_status_p_2_97
+      name: Tanque de água suja
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_drying_progress_p_2_88
+      name: Progresso da secagem
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_dry_left_time_p_2_90
+      name: Tempo restante da secagem
+  - type: entities
+    title: Estatísticas
+    show_header_toggle: false
+    entities:
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_clean_area_p_2_85
+      name: Área total limpa
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_times_p_2_86
+      name: Total de limpezas
+    - entity: sensor.xiaomi_us_1194749639_ov42gl_statistical_cleaning_duration_p_2_87
+      name: Tempo total de limpeza
